@@ -80,6 +80,12 @@ certManager:
 
 Here, `user` and `password` are credentials you use to authenticate with REG.RU.
 
+Optionally, you can change the solver name (default is `regru-dns`). It must be a valid DNS-1123 label (lowercase letters, digits and `-`, up to 63 characters) and match `solverName` in the `ClusterIssuer`:
+
+```yaml
+solverName: regru-dns
+```
+
 Next, run the following commands for the install webhook.
 
 ```shell
@@ -112,6 +118,7 @@ spec:
                 key: REGRU_PASSWORD
             # groupName should be the same as `groupName.name` in `values.yaml` file.
             groupName: acme.regru.ru
+            # solverName should be the same as `solverName` in `values.yaml` file.
             solverName: regru-dns
 ```
 and create the resource:

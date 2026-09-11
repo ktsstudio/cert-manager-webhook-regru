@@ -7,6 +7,7 @@ import (
 	"github.com/cert-manager/cert-manager/pkg/acme/webhook/cmd"
 	"github.com/flant/cert-manager-webhook-regru/regru"
 	"github.com/go-logr/logr"
+	"k8s.io/apimachinery/pkg/util/validation"
 	logsapi "k8s.io/component-base/logs/api/v1"
 )
 
@@ -55,6 +56,15 @@ func main() {
 		os.Exit(1)
 	}
 
+	solverName := os.Getenv("SOLVER_NAME")
+	if solverName == "" {
+		solverName = regru.DefaultSolverName
+	}
+	if errs := validation.IsDNS1123Label(solverName); len(errs) > 0 {
+		logger.Error("invalid SOLVER_NAME environment variable", "solverName", solverName, "errors", errs)
+		os.Exit(1)
+	}
+
 	username := os.Getenv("REGRU_USERNAME")
 	if username == "" {
 		logger.Error("REGRU_USERNAME environment variable is required")
@@ -71,7 +81,7 @@ func main() {
 
 	regru.InitClient(username, password)
 
-	logger.Info("running webhook server", "groupName", groupName)
+	logger.Info("running webhook server", "groupName", groupName, "solverName", solverName)
 
-	cmd.RunWebhookServer(groupName, &regru.Solver{})
+	cmd.RunWebhookServer(groupName, regru.NewSolver(solverName))
 }

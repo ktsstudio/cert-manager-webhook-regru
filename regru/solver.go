@@ -13,16 +13,23 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-const solverName = "regru-dns"
+// DefaultSolverName is the solver name used when no custom name is configured.
+const DefaultSolverName = "regru-dns"
 
 // Solver implements the cert-manager DNS01 webhook solver for the reg.ru DNS provider.
 type Solver struct {
+	name   string
 	client *kubernetes.Clientset
+}
+
+// NewSolver returns a Solver registered in cert-manager under the given name.
+func NewSolver(name string) *Solver {
+	return &Solver{name: name}
 }
 
 // Name returns the solver name used to select this webhook in cert-manager challenges.
 func (s *Solver) Name() string {
-	return solverName
+	return s.name
 }
 
 // Initialize sets up the Kubernetes clientset required for accessing cluster resources.
