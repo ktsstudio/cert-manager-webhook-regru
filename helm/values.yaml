@@ -6,6 +6,9 @@ issuer:
 groupName:
   name: acme.regru.ru
 
+# Solver name registered by the webhook. Must match `solverName` in the ClusterIssuer.
+solverName: regru-dns
+
 certManager:
   namespace: changeme
   serviceAccountName: cert-manager
